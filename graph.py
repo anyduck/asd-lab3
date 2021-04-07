@@ -57,7 +57,30 @@ class ColoredGraph:
         return next_node, next_colors
 
 
+    def _find_colors(self) -> bool:
+        """ Знаходить кольори вершин рекрсивним пошуком з поверненням.
+        
+        Повертає True, якщо граф розфарбовано. """
+
+        if self._is_colored():
+            return True
+
+        node, colors = self._get_next_node_and_colors()
+
+        if node is None or not colors:
+            return False
+
+        for color in colors:
+            self._colors[node] = color
+            if self._find_colors():
+                return True
+        self._colors[node] = None
+
+
     def get_colors(self):
         """ Повертає кольори вершин розфарбованого графу. """
 
-        pass
+        self._find_colors()
+        self._chromatic_number = self._get_chromatic_number()
+
+        return self._colors
