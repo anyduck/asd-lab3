@@ -1,5 +1,5 @@
 from typing import Optional
-
+from window import Window
 
 class ColoredGraph:
     def __init__(self, incidence_matrix: list[list]):
@@ -7,6 +7,7 @@ class ColoredGraph:
         self._nodes = len(self._matrix)
         self._colors = [None] * self._nodes
         self._chromatic_number = self._get_chromatic_number()
+        self._window = None
 
     @property
     def chromatic_number(self):
@@ -57,10 +58,14 @@ class ColoredGraph:
         return next_node, next_colors
 
 
-    def _find_colors(self) -> bool:
+    def _find_colors(self, interactive: bool) -> bool:
         """ Знаходить кольори вершин рекрсивним пошуком з поверненням.
         
         Повертає True, якщо граф розфарбовано. """
+
+        if interactive:
+            self._window.draw(self._colors)
+            self._window.pause(0.2)
 
         if self._is_colored():
             return True
@@ -72,15 +77,22 @@ class ColoredGraph:
 
         for color in colors:
             self._colors[node] = color
-            if self._find_colors():
+            if self._find_colors(interactive):
                 return True
         self._colors[node] = None
 
 
-    def get_colors(self):
+    def get_colors(self, interactive: bool = False):
         """ Повертає кольори вершин розфарбованого графу. """
 
-        self._find_colors()
+        if interactive and self._window is None:
+            self._window = Window('shapefiles/spain.shp')
+            self._window.blank()
+    
+        self._find_colors(interactive)
         self._chromatic_number = self._get_chromatic_number()
+
+        if interactive:
+            self._window.pause(30)
 
         return self._colors

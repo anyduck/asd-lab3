@@ -10,7 +10,7 @@ def main():
         matrix = [[int(x) for x in row] for row in csv.reader(f)]
 
     spain = ColoredGraph(matrix)
-    colors = spain.get_colors()
+    colors = spain.get_colors(interactive=True)
 
     print_colors(colors, province_names)
     print('Хроматичне число:', spain.chromatic_number)
